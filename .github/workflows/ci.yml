@@ -1,0 +1,55 @@
+name: Scheduled Task
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+
+jobs:
+  run-task:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: curl, json, mbstring
+
+      - name: Get Composer Cache
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Execute task
+        run: php index.php
+        env:
+          REGION: ${{ secrets.REGION }}
+          USER_ID: ${{ secrets.USER_ID }}
+          TENANCY_ID: ${{ secrets.TENANCY_ID }}
+          KEY_FINGERPRINT: ${{ secrets.KEY_FINGERPRINT }}
+          PRIVATE_KEY_FILENAME: ${{ secrets.PRIVATE_KEY_FILENAME }}
+          SUBNET_ID: ${{ secrets.SUBNET_ID }}
+          SHAPE: ${{ secrets.SHAPE }}
+          IMAGE_ID: ${{ secrets.IMAGE_ID }}
+          SSH_PUBLIC_KEY: ${{ secrets.SSH_PUBLIC_KEY }}
+          OCPUS: ${{ secrets.OCPUS }}
+          MEMORY_IN_GBS: ${{ secrets.MEMORY_IN_GBS }}
+          BOOT_VOLUME_SIZE_IN_GBS: ${{ secrets.BOOT_VOLUME_SIZE_IN_GBS }}
+          MAX_INSTANCES: ${{ secrets.MAX_INSTANCES }}
+          CACHE_DOMAINS: ${{ secrets.CACHE_DOMAINS }}
+          RATE_LIMIT_WAIT: ${{ secrets.RATE_LIMIT_WAIT }}
+          TELEGRAM_BOT_API_KEY: ${{ secrets.TELEGRAM_BOT_API_KEY }}
+          TELEGRAM_USER_ID: ${{ secrets.TELEGRAM_USER_ID }}

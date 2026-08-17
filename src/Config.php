@@ -48,8 +48,8 @@ class Config
         $availabilityDomains,
         string $subnetId,
         string $imageId,
-        int $ocups = 4,
-        int $memoryInGBs = 24
+        float $ocups = 4.0,
+float $memoryInGBs = 24.0
     ) {
         $this->region = $region;
         $this->userId = $userId;

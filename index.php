@@ -27,8 +27,8 @@ $config = new Config(
     getenv('AVAILABILITY_DOMAIN') ?: null,
     getenv('SUBNET_ID'),
     getenv('IMAGE_ID'),
-    (int) getenv('OCPUS'),
-    (int) getenv('MEMORY_IN_GBS')
+    (float) getenv('OCPUS'),
+    (float) getenv('MEMORY_IN_GBS')
 );
 
 $bootVolumeSizeInGBs = (string) getenv('BOOT_VOLUME_SIZE_IN_GBS');

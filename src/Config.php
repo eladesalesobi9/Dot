@@ -20,8 +20,8 @@ class Config
     public $availabilityDomains;
     public string $subnetId = '';
     public string $imageId = '';
-    public ?int $ocpus;
-    public ?int $memoryInGBs;
+    public ?float $ocpus;
+    public ?float $memoryInGBs;
 
     public string $sourceDetails;
     public string $bootVolumeId;

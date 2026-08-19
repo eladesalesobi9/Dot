@@ -53,46 +53,43 @@ class Api
 
         $displayName = 'instance-' . date('Ymd-Hi');
 
-        $body = <<<EOD
-{
-    "metadata": {
-        "ssh_authorized_keys": "$sshKey"
-    },
-    "shape": "$shape",
-    "compartmentId": "{$config->tenancyId}",
-    "displayName": "$displayName",
-    "availabilityDomain": "$availabilityDomain",
-    "sourceDetails": {$config->getSourceDetails()},
-    "createVnicDetails": {
-        "assignPublicIp": false,
-        "subnetId": "{$config->subnetId}",
-        "assignPrivateDnsRecord": true
-    },
-    "agentConfig": {
-        "pluginsConfig": [
-            {
-                "name": "Compute Instance Monitoring",
-                "desiredState": "ENABLED"
-            }
+$body = json_encode([
+    'metadata' => [
+        'ssh_authorized_keys' => trim($sshKey),
+    ],
+    'shape' => $shape,
+    'compartmentId' => $config->tenancyId,
+    'displayName' => $displayName,
+    'availabilityDomain' => $availabilityDomain,
+    'sourceDetails' => json_decode($config->getSourceDetails()),
+    'createVnicDetails' => [
+        'assignPublicIp' => false,
+        'subnetId' => $config->subnetId,
+        'assignPrivateDnsRecord' => true,
+    ],
+    'agentConfig' => [
+        'pluginsConfig' => [
+            [
+                'name' => 'Compute Instance Monitoring',
+                'desiredState' => 'ENABLED',
+            ],
         ],
-        "isMonitoringDisabled": false,
-        "isManagementDisabled": false
-    },
-    "definedTags": {},
-    "freeformTags": {},
-    "instanceOptions": {
-        "areLegacyImdsEndpointsDisabled": false
-    },
-    "availabilityConfig": {
-        "recoveryAction": "RESTORE_INSTANCE"
-    },
-    "shapeConfig": {
-        "ocpus": {$config->ocpus},
-        "memoryInGBs": {$config->memoryInGBs}
-    }
-}
-EOD;
-
+        'isMonitoringDisabled' => false,
+        'isManagementDisabled' => false,
+    ],
+    'definedTags' => new \stdClass(),
+    'freeformTags' => new \stdClass(),
+    'instanceOptions' => [
+        'areLegacyImdsEndpointsDisabled' => false,
+    ],
+    'availabilityConfig' => [
+        'recoveryAction' => 'RESTORE_INSTANCE',
+    ],
+    'shapeConfig' => [
+        'ocpus' => $config->ocpus,
+        'memoryInGBs' => $config->memoryInGBs,
+    ],
+]);
         $baseUrl = "{$this->getBaseApiUrl($config)}/instances/";
 
         try {
